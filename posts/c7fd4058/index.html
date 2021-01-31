@@ -1,0 +1,437 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><link rel="manifest" href="/manifest.json"><link rel="apple-touch-icon" sizes="76x76" href="/icon/icon.jpg"><link rel="icon" type="image/png" href="/icon/icon.jpg"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,shrink-to-fit=no"><meta http-equiv="x-ua-compatible" content="ie=edge"><meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"><meta name="theme-color" content="#2f4154"><meta name="description" content="一个学生的博客"><meta name="author" content="Peter Peng"><meta name="keywords" content="技术,分享,软件,编程,Coding,cpp,c++,python,Python,oj,oier,oi"><title>自个开发的图像处理 - PPKun&#39;s Blog</title><link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/PPKunOffical/Blog@gh-pages/lib/hint/hint.min.css"><link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css"><link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/PPKunOffical/Blog@gh-pages/css/main.css"><script src="https://cdn.jsdelivr.net/gh/PPKunOffical/Blog@gh-pages/js/utils.js"></script><meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="PPKun's Blog" type="application/atom+xml"></head><body><header style="height:70vh"><nav id="navbar" class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar"><div class="container"><a class="navbar-brand" href="/">&nbsp;<strong>PPKun's Blog</strong>&nbsp;</a> <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><div class="animated-icon"><span></span><span></span><span></span></div></button><div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav ml-auto text-center"><li class="nav-item"><a class="nav-link" href="/"><i class="iconfont icon-home-fill"></i> 首页</a></li><li class="nav-item"><a class="nav-link" href="/archives/"><i class="iconfont icon-archive-fill"></i> 归档</a></li><li class="nav-item"><a class="nav-link" href="/categories/"><i class="iconfont icon-category-fill"></i> 分类</a></li><li class="nav-item"><a class="nav-link" href="/tags/"><i class="iconfont icon-tags-fill"></i> 标签</a></li><li class="nav-item"><a class="nav-link" href="/about/"><i class="iconfont icon-user-fill"></i> 关于</a></li><li class="nav-item"><a class="nav-link" href="/links/"><i class="iconfont icon-link-fill"></i> 友链</a></li><li class="nav-item" id="search-btn"><a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i class="iconfont icon-search"></i>&nbsp;&nbsp;</a></li></ul></div></div></nav><div class="view intro-2" id="background" parallax="true" style="background:url(/img/default.png) no-repeat center center;background-size:cover"><div class="full-bg-img"><div class="mask flex-center" style="background-color:rgba(0,0,0,.3)"><div class="container text-center white-text fadeInUp"><span class="h2" id="subtitle"></span><div class="mt-3 post-meta"><i class="iconfont icon-date-fill" aria-hidden="true"></i> <time datetime="2020-02-14 21:22">2020年2月14日 晚上</time></div><div class="mt-1"><span class="post-meta mr-2"><i class="iconfont icon-chart"></i> 1.6k 字 </span><span class="post-meta mr-2"><i class="iconfont icon-clock-fill"></i> 27 分钟</span></div></div></div></div></div></header><main><div class="container-fluid"><div class="row"><div class="d-none d-lg-block col-lg-2"></div><div class="col-lg-8 nopadding-md"><div class="container nopadding-md" id="board-ctn"><div class="py-5" id="board"><div class="post-content mx-auto" id="post"><p class="note note-info">本文最后更新于：2 分钟前</p><article class="markdown-body"><h4 id="自个开发的图像处理-调用了百度的API"><a href="#自个开发的图像处理-调用了百度的API" class="headerlink" title="自个开发的图像处理,调用了百度的API"></a>自个开发的图像处理,调用了百度的API</h4><h4 id="首先是图片处理主程序："><a href="#首先是图片处理主程序：" class="headerlink" title="首先是图片处理主程序："></a>首先是图片处理主程序：</h4><pre><code class="hljs python"><span class="hljs-keyword">from</span> imageprocess <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> base64
+<span class="hljs-keyword">import</span> xlrd
+<span class="hljs-keyword">import</span> os
+
+
+<span class="hljs-comment"># 列出文件，不包含文件夹，返回列表</span>
+print(<span class="hljs-string">'你好，欢迎来到图像处理应用!'</span>)
+<span class="hljs-keyword">if</span> os.path.isfile(<span class="hljs-string">"user_id.xls"</span>)==<span class="hljs-literal">True</span>:
+    user_id=xlrd.open_workbook(<span class="hljs-string">'user_id.xls'</span>)
+    table = user_id.sheet_by_name(<span class="hljs-string">u'user_id'</span>)
+<span class="hljs-keyword">else</span>:
+    print(<span class="hljs-string">'您当前未录入信息，请录入。'</span>)
+    print(<span class="hljs-string">'请在文件目录下找到录入信息的软件，录入后请重新打开此软件'</span>)
+    exit=input(<span class="hljs-string">''</span>)
+<span class="hljs-string">""" 你的 APPID AK SK """</span>
+APP_ID = table.cell(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>).value
+API_KEY = table.cell(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>).value
+SECRET_KEY = table.cell(<span class="hljs-number">0</span>,<span class="hljs-number">2</span>).value
+
+client = AipImageProcess(APP_ID, API_KEY, SECRET_KEY)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">dehaze</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">""" 读取图片 """</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_file_content</span><span class="hljs-params">(filePath)</span>:</span>
+        <span class="hljs-keyword">with</span> open(filePath, <span class="hljs-string">'rb'</span>) <span class="hljs-keyword">as</span> fp:
+            <span class="hljs-keyword">return</span> fp.read()
+    image_lj=input(<span class="hljs-string">'请输入你的图片路径:'</span>)
+    image = get_file_content(image_lj)
+
+    <span class="hljs-string">""" 调用图像去雾 """</span>
+    base64_image_dict=client.dehaze(image);
+
+    base64_image=base64_image_dict[<span class="hljs-string">'image'</span>]
+    imgdata = base64.b64decode(base64_image)
+    <span class="hljs-comment"># 将二进制数据装换为图片</span>
+    
+    <span class="hljs-keyword">with</span> open(<span class="hljs-string">"./OK.png"</span>, <span class="hljs-string">"wb"</span>) <span class="hljs-keyword">as</span> f2:
+        f2.write(imgdata)
+	exit=input(<span class="hljs-string">'你好，已处理完成，图片放置在当前目录下，名字为OK.png.请输入回车退出'</span>)
+<span class="hljs-string">'''</span>
+<span class="hljs-string">---------------一条优美的分割线-------------------------------</span>
+<span class="hljs-string">'''</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">clourful</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">""" 读取图片 """</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_file_content</span><span class="hljs-params">(filePath)</span>:</span>
+        <span class="hljs-keyword">with</span> open(filePath, <span class="hljs-string">'rb'</span>) <span class="hljs-keyword">as</span> fp:
+            <span class="hljs-keyword">return</span> fp.read()
+    image_lj=input(<span class="hljs-string">'请输入你的图片路径:'</span>)
+    image = get_file_content(image_lj)
+
+    base64_image_dict=client.contrastEnhance(image);
+
+    base64_image=base64_image_dict[<span class="hljs-string">'image'</span>]
+    imgdata = base64.b64decode(base64_image)
+    <span class="hljs-comment"># 将二进制数据装换为图片</span>
+
+    
+    <span class="hljs-keyword">with</span> open(<span class="hljs-string">"./OK.png"</span>, <span class="hljs-string">"wb"</span>) <span class="hljs-keyword">as</span> f2:
+        f2.write(imgdata)
+    exit=input(<span class="hljs-string">'你好，已处理完成，图片放置在当前目录下，名字为OK.png.请输入回车退出'</span>)
+<span class="hljs-string">'''</span>
+<span class="hljs-string">---------------一条优美的分割线-------------------------------</span>
+<span class="hljs-string">'''</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">imageQualityEnhance</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">""" 读取图片 """</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_file_content</span><span class="hljs-params">(filePath)</span>:</span>
+        <span class="hljs-keyword">with</span> open(filePath, <span class="hljs-string">'rb'</span>) <span class="hljs-keyword">as</span> fp:
+            <span class="hljs-keyword">return</span> fp.read()
+    image_lj=input(<span class="hljs-string">'请输入你的图片路径:'</span>)
+    image = get_file_content(image_lj)
+
+    base64_image_dict=client.imageQualityEnhance(image);
+
+    base64_image=base64_image_dict[<span class="hljs-string">'image'</span>]
+    imgdata = base64.b64decode(base64_image)
+    <span class="hljs-comment"># 将二进制数据装换为图片</span>
+
+    
+    <span class="hljs-keyword">with</span> open(<span class="hljs-string">"./OK.png"</span>, <span class="hljs-string">"wb"</span>) <span class="hljs-keyword">as</span> f2:
+        f2.write(imgdata)
+    exit=input(<span class="hljs-string">'你好，已处理完成，图片放置在当前目录下，名字为OK.png.请输入回车退出'</span>)
+choose=str(input(<span class="hljs-string">'你要用哪个服务?(1.图像去雾 2.图像增彩 3.图像放大 ；输入数字)'</span>))
+<span class="hljs-keyword">if</span> choose==<span class="hljs-string">'1'</span>:
+    dehaze()
+<span class="hljs-keyword">if</span> choose==<span class="hljs-string">'2'</span>:
+    clourful()
+<span class="hljs-keyword">if</span> choose==<span class="hljs-string">'3'</span>:
+    imageQualityEnhance()</code></pre><p>然后是百度的SDK：</p><p>imageprocess.py：</p><pre><code class="hljs python"><span class="hljs-comment"># -*- coding: utf-8 -*-</span>
+
+<span class="hljs-string">"""</span>
+<span class="hljs-string">图像处理</span>
+<span class="hljs-string">"""</span>
+
+<span class="hljs-keyword">import</span> re
+<span class="hljs-keyword">import</span> sys
+<span class="hljs-keyword">import</span> math
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">from</span> base <span class="hljs-keyword">import</span> AipBase
+<span class="hljs-keyword">from</span> base <span class="hljs-keyword">import</span> base64
+<span class="hljs-keyword">from</span> base <span class="hljs-keyword">import</span> json
+<span class="hljs-keyword">from</span> base <span class="hljs-keyword">import</span> urlencode
+<span class="hljs-keyword">from</span> base <span class="hljs-keyword">import</span> quote
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AipImageProcess</span><span class="hljs-params">(AipBase)</span>:</span>
+
+    <span class="hljs-string">"""</span>
+<span class="hljs-string">    图像处理</span>
+<span class="hljs-string">    """</span>
+
+    __imageQualityEnhanceUrl = <span class="hljs-string">'https://aip.baidubce.com/rest/2.0/image-process/v1/image_quality_enhance'</span>
+
+    __dehazeUrl = <span class="hljs-string">'https://aip.baidubce.com/rest/2.0/image-process/v1/dehaze'</span>
+
+    __contrastEnhanceUrl = <span class="hljs-string">'https://aip.baidubce.com/rest/2.0/image-process/v1/contrast_enhance'</span>
+
+    
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">imageQualityEnhance</span><span class="hljs-params">(self, image, options=None)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            图像无损放大</span>
+<span class="hljs-string">        """</span>
+        options = options <span class="hljs-keyword">or</span> &#123;&#125;
+
+        data = &#123;&#125;
+        data[<span class="hljs-string">'image'</span>] = base64.b64encode(image).decode()
+
+        data.update(options)
+
+        <span class="hljs-keyword">return</span> self._request(self.__imageQualityEnhanceUrl, data)
+    
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">dehaze</span><span class="hljs-params">(self, image, options=None)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            图像去雾</span>
+<span class="hljs-string">        """</span>
+        options = options <span class="hljs-keyword">or</span> &#123;&#125;
+
+        data = &#123;&#125;
+        data[<span class="hljs-string">'image'</span>] = base64.b64encode(image).decode()
+
+        data.update(options)
+
+        <span class="hljs-keyword">return</span> self._request(self.__dehazeUrl, data)
+    
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">contrastEnhance</span><span class="hljs-params">(self, image, options=None)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            图像对比度增强</span>
+<span class="hljs-string">        """</span>
+        options = options <span class="hljs-keyword">or</span> &#123;&#125;
+
+        data = &#123;&#125;
+        data[<span class="hljs-string">'image'</span>] = base64.b64encode(image).decode()
+
+        data.update(options)
+
+        <span class="hljs-keyword">return</span> self._request(self.__contrastEnhanceUrl, data)</code></pre><p>BASE64:</p><pre><code class="hljs python"><span class="hljs-comment"># -*- coding: utf-8 -*-</span>
+
+<span class="hljs-string">"""</span>
+<span class="hljs-string">    AipBase</span>
+<span class="hljs-string">"""</span>
+<span class="hljs-keyword">import</span> hmac
+<span class="hljs-keyword">import</span> json
+<span class="hljs-keyword">import</span> hashlib
+<span class="hljs-keyword">import</span> datetime
+<span class="hljs-keyword">import</span> base64
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> sys
+<span class="hljs-keyword">import</span> requests
+requests.packages.urllib3.disable_warnings()
+
+
+<span class="hljs-keyword">if</span> sys.version_info.major == <span class="hljs-number">2</span>:
+    <span class="hljs-keyword">from</span> urllib <span class="hljs-keyword">import</span> urlencode
+    <span class="hljs-keyword">from</span> urllib <span class="hljs-keyword">import</span> quote
+    <span class="hljs-keyword">from</span> urlparse <span class="hljs-keyword">import</span> urlparse
+<span class="hljs-keyword">else</span>:
+    <span class="hljs-keyword">from</span> urllib.parse <span class="hljs-keyword">import</span> urlencode
+    <span class="hljs-keyword">from</span> urllib.parse <span class="hljs-keyword">import</span> quote
+    <span class="hljs-keyword">from</span> urllib.parse <span class="hljs-keyword">import</span> urlparse
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AipBase</span><span class="hljs-params">(object)</span>:</span>
+    <span class="hljs-string">"""</span>
+<span class="hljs-string">        AipBase</span>
+<span class="hljs-string">    """</span>
+
+    __accessTokenUrl = <span class="hljs-string">'https://aip.baidubce.com/oauth/2.0/token'</span>
+
+    __reportUrl = <span class="hljs-string">'https://aip.baidubce.com/rpc/2.0/feedback/v1/report'</span>
+
+    __scope = <span class="hljs-string">'brain_all_scope'</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self, appId, apiKey, secretKey)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            AipBase(appId, apiKey, secretKey)</span>
+<span class="hljs-string">        """</span>
+
+        self._appId = appId.strip()
+        self._apiKey = apiKey.strip()
+        self._secretKey = secretKey.strip()
+        self._authObj = &#123;&#125;
+        self._isCloudUser = <span class="hljs-literal">None</span>
+        self.__client = requests
+        self.__connectTimeout = <span class="hljs-number">60.0</span>
+        self.__socketTimeout = <span class="hljs-number">60.0</span>
+        self._proxies = &#123;&#125;
+        self.__version = <span class="hljs-string">'2_2_17'</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">getVersion</span><span class="hljs-params">(self)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            version</span>
+<span class="hljs-string">        """</span>
+        <span class="hljs-keyword">return</span> self.__version
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">setConnectionTimeoutInMillis</span><span class="hljs-params">(self, ms)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            setConnectionTimeoutInMillis</span>
+<span class="hljs-string">        """</span>
+
+        self.__connectTimeout = ms / <span class="hljs-number">1000.0</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">setSocketTimeoutInMillis</span><span class="hljs-params">(self, ms)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            setSocketTimeoutInMillis</span>
+<span class="hljs-string">        """</span>
+
+        self.__socketTimeout = ms / <span class="hljs-number">1000.0</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">setProxies</span><span class="hljs-params">(self, proxies)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            proxies</span>
+<span class="hljs-string">        """</span>
+
+        self._proxies = proxies
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_request</span><span class="hljs-params">(self, url, data, headers=None)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            self._request('', &#123;&#125;)</span>
+<span class="hljs-string">        """</span>
+        <span class="hljs-keyword">try</span>:
+            result = self._validate(url, data)
+            <span class="hljs-keyword">if</span> result != <span class="hljs-literal">True</span>:
+                <span class="hljs-keyword">return</span> result
+
+            authObj = self._auth()
+            params = self._getParams(authObj)
+
+            data = self._proccessRequest(url, params, data, headers)
+            headers = self._getAuthHeaders(<span class="hljs-string">'POST'</span>, url, params, headers)
+            response = self.__client.post(url, data=data, params=params,
+                            headers=headers, verify=<span class="hljs-literal">False</span>, timeout=(
+                                self.__connectTimeout,
+                                self.__socketTimeout,
+                            ), proxies=self._proxies
+                        )
+            obj = self._proccessResult(response.content)
+
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> self._isCloudUser <span class="hljs-keyword">and</span> obj.get(<span class="hljs-string">'error_code'</span>, <span class="hljs-string">''</span>) == <span class="hljs-number">110</span>:
+                authObj = self._auth(<span class="hljs-literal">True</span>)
+                params = self._getParams(authObj)
+                response = self.__client.post(url, data=data, params=params,
+                                headers=headers, verify=<span class="hljs-literal">False</span>, timeout=(
+                                    self.__connectTimeout,
+                                    self.__socketTimeout,
+                                ), proxies=self._proxies
+                            )
+                obj = self._proccessResult(response.content)
+        <span class="hljs-keyword">except</span> (requests.exceptions.ReadTimeout, requests.exceptions.ConnectTimeout) <span class="hljs-keyword">as</span> e:
+            <span class="hljs-keyword">return</span> &#123;
+                <span class="hljs-string">'error_code'</span>: <span class="hljs-string">'SDK108'</span>,
+                <span class="hljs-string">'error_msg'</span>: <span class="hljs-string">'connection or read data timeout'</span>,
+            &#125;
+
+        <span class="hljs-keyword">return</span> obj
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_validate</span><span class="hljs-params">(self, url, data)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            validate</span>
+<span class="hljs-string">        """</span>
+
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_proccessRequest</span><span class="hljs-params">(self, url, params, data, headers)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            参数处理</span>
+<span class="hljs-string">        """</span>
+
+        params[<span class="hljs-string">'aipSdk'</span>] = <span class="hljs-string">'python'</span>
+        params[<span class="hljs-string">'aipVersion'</span>] = self.__version
+
+        <span class="hljs-keyword">return</span> data
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_proccessResult</span><span class="hljs-params">(self, content)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            formate result</span>
+<span class="hljs-string">        """</span>
+
+        <span class="hljs-keyword">if</span> sys.version_info.major == <span class="hljs-number">2</span>:
+            <span class="hljs-keyword">return</span> json.loads(content) <span class="hljs-keyword">or</span> &#123;&#125;
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-keyword">return</span> json.loads(content.decode()) <span class="hljs-keyword">or</span> &#123;&#125;
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_auth</span><span class="hljs-params">(self, refresh=False)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            api access auth</span>
+<span class="hljs-string">        """</span>
+
+        <span class="hljs-comment">#未过期</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> refresh:
+            tm = self._authObj.get(<span class="hljs-string">'time'</span>, <span class="hljs-number">0</span>) + int(self._authObj.get(<span class="hljs-string">'expires_in'</span>, <span class="hljs-number">0</span>)) - <span class="hljs-number">30</span>
+            <span class="hljs-keyword">if</span> tm &gt; int(time.time()):
+                <span class="hljs-keyword">return</span> self._authObj
+
+        obj = self.__client.get(self.__accessTokenUrl, verify=<span class="hljs-literal">False</span>, params=&#123;
+            <span class="hljs-string">'grant_type'</span>: <span class="hljs-string">'client_credentials'</span>,
+            <span class="hljs-string">'client_id'</span>: self._apiKey,
+            <span class="hljs-string">'client_secret'</span>: self._secretKey,
+        &#125;, timeout=(
+            self.__connectTimeout,
+            self.__socketTimeout,
+        ), proxies=self._proxies).json()
+
+        self._isCloudUser = <span class="hljs-keyword">not</span> self._isPermission(obj)
+        obj[<span class="hljs-string">'time'</span>] = int(time.time())
+        self._authObj = obj
+
+        <span class="hljs-keyword">return</span> obj
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_isPermission</span><span class="hljs-params">(self, authObj)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            check whether permission</span>
+<span class="hljs-string">        """</span>
+
+        scopes = authObj.get(<span class="hljs-string">'scope'</span>, <span class="hljs-string">''</span>)
+
+        <span class="hljs-keyword">return</span> self.__scope <span class="hljs-keyword">in</span> scopes.split(<span class="hljs-string">' '</span>)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_getParams</span><span class="hljs-params">(self, authObj)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            api request http url params</span>
+<span class="hljs-string">        """</span>
+
+        params = &#123;&#125;
+
+        <span class="hljs-keyword">if</span> self._isCloudUser == <span class="hljs-literal">False</span>:
+            params[<span class="hljs-string">'access_token'</span>] = authObj[<span class="hljs-string">'access_token'</span>]
+
+        <span class="hljs-keyword">return</span> params
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_getAuthHeaders</span><span class="hljs-params">(self, method, url, params=None, headers=None)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            api request http headers</span>
+<span class="hljs-string">        """</span>
+
+        headers = headers <span class="hljs-keyword">or</span> &#123;&#125;
+        params = params <span class="hljs-keyword">or</span> &#123;&#125;
+
+        <span class="hljs-keyword">if</span> self._isCloudUser == <span class="hljs-literal">False</span>:
+            <span class="hljs-keyword">return</span> headers
+
+        urlResult = urlparse(url)
+        <span class="hljs-keyword">for</span> kv <span class="hljs-keyword">in</span> urlResult.query.strip().split(<span class="hljs-string">'&amp;'</span>):
+            <span class="hljs-keyword">if</span> kv:
+                k, v = kv.split(<span class="hljs-string">'='</span>)
+                params[k] = v
+
+        <span class="hljs-comment"># UTC timestamp</span>
+        timestamp = datetime.datetime.utcnow().strftime(<span class="hljs-string">'%Y-%m-%dT%H:%M:%SZ'</span>)
+        headers[<span class="hljs-string">'Host'</span>] = urlResult.hostname
+        headers[<span class="hljs-string">'x-bce-date'</span>] = timestamp
+        version, expire = <span class="hljs-string">'1'</span>, <span class="hljs-string">'1800'</span>
+
+        <span class="hljs-comment"># 1 Generate SigningKey</span>
+        val = <span class="hljs-string">"bce-auth-v%s/%s/%s/%s"</span> % (version, self._apiKey, timestamp, expire)
+        signingKey = hmac.new(self._secretKey.encode(<span class="hljs-string">'utf-8'</span>), val.encode(<span class="hljs-string">'utf-8'</span>),
+            hashlib.sha256
+        ).hexdigest()
+
+        <span class="hljs-comment"># 2 Generate CanonicalRequest</span>
+        <span class="hljs-comment"># 2.1 Genrate CanonicalURI</span>
+        canonicalUri = quote(urlResult.path)
+        <span class="hljs-comment"># 2.2 Generate CanonicalURI: not used here</span>
+        <span class="hljs-comment"># 2.3 Generate CanonicalHeaders: only include host here</span>
+
+        canonicalHeaders = []
+        <span class="hljs-keyword">for</span> header, val <span class="hljs-keyword">in</span> headers.items():
+            canonicalHeaders.append(
+                <span class="hljs-string">'%s:%s'</span> % (
+                    quote(header.strip(), <span class="hljs-string">''</span>).lower(),
+                    quote(val.strip(), <span class="hljs-string">''</span>)
+                )
+            )
+        canonicalHeaders = <span class="hljs-string">'\n'</span>.join(sorted(canonicalHeaders))
+
+        <span class="hljs-comment"># 2.4 Generate CanonicalRequest</span>
+        canonicalRequest = <span class="hljs-string">'%s\n%s\n%s\n%s'</span> % (
+            method.upper(),
+            canonicalUri,
+            <span class="hljs-string">'&amp;'</span>.join(sorted(urlencode(params).split(<span class="hljs-string">'&amp;'</span>))),
+            canonicalHeaders
+        )
+
+        <span class="hljs-comment"># 3 Generate Final Signature</span>
+        signature = hmac.new(signingKey.encode(<span class="hljs-string">'utf-8'</span>), canonicalRequest.encode(<span class="hljs-string">'utf-8'</span>),
+                        hashlib.sha256
+                    ).hexdigest()
+
+        headers[<span class="hljs-string">'authorization'</span>] = <span class="hljs-string">'bce-auth-v%s/%s/%s/%s/%s/%s'</span> % (
+            version,
+            self._apiKey,
+            timestamp,
+            expire,
+            <span class="hljs-string">';'</span>.join(headers.keys()).lower(),
+            signature
+        )
+
+        <span class="hljs-keyword">return</span> headers
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">report</span><span class="hljs-params">(self, feedback)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            数据反馈</span>
+<span class="hljs-string">        """</span>
+
+        data = &#123;&#125;
+        data[<span class="hljs-string">'feedback'</span>] = feedback
+
+        <span class="hljs-keyword">return</span> self._request(self.__reportUrl, data)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">post</span><span class="hljs-params">(self, url, data, headers=None)</span>:</span>
+        <span class="hljs-string">"""</span>
+<span class="hljs-string">            self.post('', &#123;&#125;)</span>
+<span class="hljs-string">        """</span>
+        <span class="hljs-keyword">return</span> self._request(url, data, headers)</code></pre><h4 id="当然，我会重点讲我的主程序，为什么呢？因为百度那些我都不懂"><a href="#当然，我会重点讲我的主程序，为什么呢？因为百度那些我都不懂" class="headerlink" title="当然，我会重点讲我的主程序，为什么呢？因为百度那些我都不懂"></a>当然，我会<del>重点讲我的主程序，为什么呢？因为百度那些我都不懂</del></h4><h4 id="这是流程图"><a href="#这是流程图" class="headerlink" title="这是流程图"></a>这是流程图</h4><pre><code class="hljs coq">A[用户输入] --&gt;|<span class="hljs-type">数据存到变量| B</span>(选择)
+B --&gt; C&#123;判断条件&#125;
+C --&gt;|<span class="hljs-type">假如选一| D</span>[去雾]
+C --&gt;|<span class="hljs-type">假如选二| E</span>[图片增彩]
+C --&gt;|<span class="hljs-type">假如选三| F</span>[无损放大]
+D --&gt; G[输出结果]
+E --&gt; G[输出结果]
+F --&gt; G[输出结果]</code></pre><h4 id="看懂了撒？"><a href="#看懂了撒？" class="headerlink" title="看懂了撒？"></a>看懂了撒？</h4><h4 id="看不懂没关系，文字版的来了："><a href="#看不懂没关系，文字版的来了：" class="headerlink" title="看不懂没关系，文字版的来了："></a>看不懂没关系，文字版的来了：</h4><ol><li>用户输入选择</li><li>储存到变量</li><li>选择</li><li>判断</li><li>选择对应函数</li><li>输出处理好的文件</li></ol><h4 id="这个是成品："><a href="#这个是成品：" class="headerlink" title="这个是成品："></a>这个是成品：</h4><p><a href="https://ufile.goldpetergood.top/web_files/%E5%9B%BE%E7%89%87%E5%A4%84%E7%90%86/dist.7z" target="_blank" rel="noopener">成品</a></p><h4 id="效果放送"><a href="#效果放送" class="headerlink" title="效果放送"></a>效果放送</h4><p>这是未处理的：<br><img src="https://juezz.top/usr/uploads/2019/08/2700740799.jpg" srcset="https://cdn.jsdelivr.net/gh/PPKunOffical/Blog@gh-pages/img/loading.gif" alt="test.jpg"><br>这是处理过的：<br><img src="https://juezz.top/usr/uploads/2019/08/330721186.png" srcset="https://cdn.jsdelivr.net/gh/PPKunOffical/Blog@gh-pages/img/loading.gif" alt="OK.png"><br>(我放的那张测试图片好像雾大了点，所以才是黑黑的)</p></article><hr><div><div class="post-metas mb-3"><div class="post-meta mr-3"><i class="iconfont icon-category"></i> <a class="hover-with-bg" href="/categories/%E7%BC%96%E7%A8%8B/">编程</a></div><div class="post-meta"><i class="iconfont icon-tags"></i> <a class="hover-with-bg" href="/tags/%E4%BB%A3%E7%A0%81/">代码</a> <a class="hover-with-bg" href="/tags/Python/">Python</a> <a class="hover-with-bg" href="/tags/%E7%BC%96%E7%A8%8B/">编程</a> <a class="hover-with-bg" href="/tags/Coding/">Coding</a></div></div><p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p><div class="post-prevnext row"><div class="post-prev col-6"><a href="/posts/b6bbca17/"><i class="iconfont icon-arrowleft"></i> <span class="hidden-mobile">安装 lnmp 要保险请先运行 screen</span> <span class="visible-mobile">上一篇</span></a></div><div class="post-next col-6"><a href="/posts/cb3d077c/"><span class="hidden-mobile">咕咕咕了几天，今天出个DzzOffice的教程吧</span> <span class="visible-mobile">下一篇</span> <i class="iconfont icon-arrowright"></i></a></div></div></div><div class="comments" id="comments"></div></div></div></div></div><div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn"><div id="toc"><p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p><div id="tocbot"></div></div></div></div></div></main><a id="scroll-top-button" href="#" role="button"><i class="iconfont icon-arrowup" aria-hidden="true"></i></a><div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable modal-lg" role="document"><div class="modal-content"><div class="modal-header text-center"><h4 class="modal-title w-100 font-weight-bold">搜索</h4><button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body mx-3"><div class="md-form mb-5"><input type="text" id="local-search-input" class="form-control validate"> <label data-error="x" data-success="v" for="local-search-input">关键词</label></div><div class="list-group" id="local-search-result"></div></div></div></div></div><footer class="mt-5"><div class="text-center py-3"><div><a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a></div><div class="statistics"><span id="busuanzi_container_site_pv" style="display:none">总访问量 <span id="busuanzi_value_site_pv"></span> 次 </span><span id="busuanzi_container_site_uv" style="display:none">总访客数 <span id="busuanzi_value_site_uv"></span> 人</span></div><div class="beian"><a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow noopener"></a></div></div></footer><script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script><script src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script><script src="https://cdn.jsdelivr.net/gh/PPKunOffical/Blog@gh-pages/js/debouncer.js"></script><script src="https://cdn.jsdelivr.net/gh/PPKunOffical/Blog@gh-pages/js/main.js"></script><script src="https://cdn.jsdelivr.net/gh/PPKunOffical/Blog@gh-pages/js/lazyload.js"></script><script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js"></script><script src="https://cdn.jsdelivr.net/gh/PPKunOffical/Blog@gh-pages/js/clipboard-use.js"></script><script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js"></script><script>$(document).ready((function(){var t=$("#board-ctn").offset().top;tocbot.init({tocSelector:"#tocbot",contentSelector:"article.markdown-body",headingSelector:"h1,h2,h3,h4,h5,h6",linkClass:"tocbot-link",activeLinkClass:"tocbot-active-link",listClass:"tocbot-list",isCollapsedClass:"tocbot-is-collapsed",collapsibleClass:"tocbot-is-collapsible",collapseDepth:0,scrollSmooth:!0,headingsOffset:-t}),$(".toc-list-item").length>0&&$("#toc").css("visibility","visible")}))</script><script src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js"></script><script>var typed=new Typed("#subtitle",{strings:["  ","自个开发的图像处理&nbsp;"],cursorChar:"_",typeSpeed:70,loop:!1});typed.stop(),$(document).ready((function(){$(".typed-cursor").addClass("h2"),typed.start()}))</script><script src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js"></script><script>anchors.options={placement:"right",visible:"hover"};var el="h1,h2,h3,h4,h5,h6".split(","),res=[];for(item of el)res.push(".markdown-body > "+item);anchors.add(res.join(", "))</script><script src="https://cdn.jsdelivr.net/gh/PPKunOffical/Blog@gh-pages/js/local-search.js"></script><script>var path="/local-search.xml",inputArea=document.querySelector("#local-search-input");inputArea.onclick=function(){searchFunc(path,"local-search-input","local-search-result"),this.onclick=null}</script><script src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js"></script><link rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css"><script>$("#post img:not(.no-zoom img, img[no-zoom]), img[zoom]").each((function(){var t=document.createElement("a");$(t).attr("data-fancybox","images"),$(t).attr("href",$(this).attr("src")),$(this).wrap(t)}))</script><script type="text/javascript">var a_idx=0;jQuery(document).ready((function(a){a("body").click((function(o){var t=new Array("富强","民主","文明","和谐","自由","平等","公正","法治","爱国","敬业","诚信","友善"),n=a("<span/>").text(t[a_idx]);a_idx=(a_idx+1)%t.length;var e=o.pageX,d=o.pageY;n.css({"z-index":999,top:d-20,left:e,position:"absolute","font-weight":"bold",color:"rgb("+~~(255*Math.random())+","+~~(255*Math.random())+","+~~(255*Math.random())+")"}),a("body").append(n),n.animate({top:d-180,opacity:0},1500,(function(){n.remove()}))}))}))</script><script async>window.onload=function(){var a=document.createElement('script'),b=document.getElementsByTagName('script')[0];a.type='text/javascript',a.async=!0,a.src='/sw-register.js?v='+Date.now(),b.parentNode.insertBefore(a,b)};</script></body></html>
